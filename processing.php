@@ -22,7 +22,7 @@ if(isset($_POST['submit']) && isset($_FILES)) {
       uploadToApi($target_file);
     } else {
       header('HTTP/1.0 403 Forbidden');
-      echo "Sorry, there was an error uploading your file.".$_FILES["file"]["error"];
+      echo "Not uploaded because of error #".$_FILES["attachment"]["error"];
     }
   } 
 } else {
