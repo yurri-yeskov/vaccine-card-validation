@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="../php/bootstrap.php"
+         colors="true"
+         stopOnError="false"
+         stopOnFailure="false"
+        >
+  <testsuites>
+    <testsuite>
+      <directory>../php</directory>
+    </testsuite>
+  </testsuites>
+  <filter>
+    <whitelist>
+      <directory suffix=".php">../../main/php</directory>
+    </whitelist>
+  </filter>
+</phpunit>

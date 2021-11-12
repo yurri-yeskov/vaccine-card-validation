@@ -1,0 +1,12 @@
+{
+    "name": "php/ocr",
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "authors": [
+        {
+            "name": "Dever Pham",
+            "email": "deverpham@gmail.com"
+        }
+    ]
+}

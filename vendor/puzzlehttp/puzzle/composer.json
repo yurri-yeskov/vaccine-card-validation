@@ -1,0 +1,54 @@
+{
+    "name": "puzzlehttp/puzzle",
+    "type": "library",
+    "description": "Fork of guzzlehttp/guzzle compatible with PHP 5.2+.",
+    "keywords": ["framework", "http", "rest", "web service", "curl", "client", "HTTP client"],
+    "homepage": "http://guzzlephp.org/",
+    "license": "MIT",
+
+    "authors": [
+        {
+            "name": "Michael Dowling",
+            "email": "mtdowling@gmail.com",
+            "homepage": "https://github.com/mtdowling"
+        },
+        {
+            "name": "Eric Hough",
+            "email": "eric@tubepress.org",
+            "homepage": "https://github.com/ehough"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.2.0",
+        "ext-json": "*",
+        "puzzlehttp/streams": "~2.1"
+    },
+
+    "suggest": {
+        "ext-curl": "Guzzle will use specific adapters if cURL is present"
+    },
+
+    "autoload": {
+        "psr-0": {
+            "puzzle_": "src/main/php"
+        },
+        "files": ["src/main/php/puzzle/functions.php"]
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "puzzle_test_": "src/test/php/"
+        }
+    },
+    "require-dev": {
+        "ext-curl": "*",
+        "psr/log": "~1.0",
+        "phpunit/phpunit": "3.7.*"
+    },
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.2-dev"
+        }
+    }
+}

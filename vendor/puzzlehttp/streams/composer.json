@@ -1,0 +1,34 @@
+{
+    "name": "puzzlehttp/streams",
+    "description": "Fork of guzzlehttp/streams compatible with PHP 5.2+.",
+    "homepage": "http://guzzlephp.org/",
+    "keywords": ["stream", "guzzle", "puzzle"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Dowling",
+            "email": "mtdowling@gmail.com",
+            "homepage": "https://github.com/mtdowling"
+        },
+        {
+            "name": "Eric Hough",
+            "email": "eric@tubepress.org",
+            "homepage": "https://github.com/ehough"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "psr-0": { "puzzle_stream_": "src/main/php" },
+        "files": ["src/main/php/puzzle/stream/functions.php"]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0-dev"
+        }
+    }
+}
