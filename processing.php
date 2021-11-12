@@ -36,7 +36,7 @@ function uploadToApi($target_file){
   $client = new \GuzzleHttp\Client();
   try {
   $r = $client->request('POST', 'https://api.ocr.space/parse/image', [
-    'headers' => ['apiKey' => '8163d9aa9b88957'],
+    'headers' => ['apiKey' => '1abd3084f488957'],
     'multipart' => [
       [
         'name' => 'file',
