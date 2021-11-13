@@ -30,7 +30,7 @@ if(isset($_POST['submit']) && isset($_FILES)) {
   echo "Sorry, please upload a PNG, JPG or PDF file";
 }
 
-function uploadToApi($target_file){
+function uploadToApi($target_file) {
   require __DIR__ . '/vendor/autoload.php';
   $fileData = fopen($target_file, 'r');
   $client = new \GuzzleHttp\Client();
@@ -54,10 +54,10 @@ function uploadToApi($target_file){
   ]);
   $response =  json_decode($r->getBody(), true);
   // print_r($response);
-  foreach($response['ParsedResults'] as $pareValue) {
-    $errorMessage = $pareValue['ErrorMessage'];
-  }
-  if(!$errorMessage) {
+  // foreach($response['ParsedResults'] as $pareValue) {
+  //   $errorMessage = $pareValue['ErrorMessage'];
+  // }
+  if(!isset($response['ErrorMessage'])) {
 ?>
 <html>
     <head>
@@ -136,7 +136,7 @@ function uploadToApi($target_file){
 <?php
   } else {
     header('HTTP/1.0 400 Forbidden');
-    echo $errorMessage;
+    echo $response['ErrorMessage'][0];
   }
   } catch(Exception $err) {
     header('HTTP/1.0 403 Forbidden');
@@ -196,20 +196,3 @@ function editDistance($s1, $s2) {
   return $costs[strlen($s2)];
 }
 ?>
-
-<!-- 
-Array ( 
-  [ParsedResults] => Array ( 
-    [0] => Array ( 
-      [TextOverlay] => Array ( 
-        [Lines] => Array ( ) 
-        [HasOverlay] => [Message] => Text overlay is not provided as it is not requested 
-      ) 
-      [TextOrientation] => 0 
-      [FileParseExitCode] => 1 
-      [ParsedText] => Blockchain is a decentralized ledger of all transactions across a peer-to-peer network. Blockchain BLOCKCHA'N It not only performs It is a technology that enables transactions but also ensures Bitcoin and is also applied anonymity and to many business processes. security of the users. 
-      [ErrorMessage] => [ErrorDetails] => 
-    ) 
-  ) 
-  
-  [OCRExitCode] => 1 [IsErroredOnProcessing] => [ProcessingTimeInMilliseconds] => 1562 [SearchablePDFURL] => Searchable PDF not generated as it was not requested. ) -->
