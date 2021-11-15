@@ -6,7 +6,7 @@ if(isset($_POST['submit']) && isset($_FILES)) {
   $fileType = strtolower(pathinfo($_FILES["attachment"]["name"],PATHINFO_EXTENSION));
   $target_file = $target_dir . generateRandomString() .'.'.$fileType;
   // Check file size
-  if ($_FILES["attachment"]["size"] > 5000000) {
+  if ($_FILES["attachment"]["size"] > 1048576) { // the file size should be smaller than 1 MB(= 1048576 byte)
     header('HTTP/1.0 403 Forbidden');
     echo "Sorry, your file is too large.";
     $uploadOk = 0;
@@ -58,6 +58,62 @@ function uploadToApi($target_file) {
   //   $errorMessage = $pareValue['ErrorMessage'];
   // }
   if(!isset($response['ErrorMessage'])) {
+    $compareTextArray = [
+      "COVID-19 Vaccination Record Card",
+      "Please keep this record card, which includes medical information",
+      "about the vaccines you have received.",
+      "Por favor, guarde esta tarjeta de registro, que incluye información",
+      "médica sobre las vacunas que ha recibido.",
+      "Last Name",
+      "Date of birth",
+      "First Name",
+      "MI",
+      "Patient number (medical record or IIS record number)",
+      "Product Name/Manufacturer",
+      "Vaccine",
+      "Lot Number",
+      "1st Dose",
+      "2nd Dose",
+      "COVID-19",
+      "Date",
+      "Healthcare Professional",
+      "or Clinic Site",
+      "Other",
+      "mm dd yy"
+    ];
+    $similarityRateArray = [];
+    foreach($response['ParsedResults'] as $pareValue) {
+      // echo $pareValue['ParsedText'];
+      $pareValueArray = explode("\t", $pareValue['ParsedText']);
+      foreach($pareValueArray as $value) {
+        foreach($compareTextArray as $compareText) {
+          if (preg_replace('/\s+/', '', $value) == "") break;
+          $similarityRate = similarity($value, $compareText);
+          if ($similarityRate > 0.95) {
+            array_push($similarityRateArray, $similarityRate);
+            // echo "--------------------------\n";
+            // echo $similarityRate."\n";
+            break;
+          } else {
+            $valueLen = strlen(preg_replace('/\s+/', '', $value));
+            $diffCount = $valueLen - $valueLen * $similarityRate;
+            if ($diffCount <= 1) {
+              array_push($similarityRateArray, $similarityRate);
+              // echo "--------------------------\n";
+              // echo $similarityRate."\n";
+              break;
+            }
+          }
+        }
+      }
+    }
+    $average = 2;
+    $idx = 0;
+    while ($average > 1) {
+      $average = array_sum($similarityRateArray)/(count($compareTextArray) + 1);
+      $idx++;
+    }
+    $result_percent = $average * 100;
 ?>
 <html>
     <head>
@@ -67,68 +123,17 @@ function uploadToApi($target_file) {
       <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.0/js/bootstrap.min.js'></script>
     </head>
     <body>
-      <div class="form-group container">
-        <label for="resultTextarea">Result</label>
+      <div class="form-group container mt-4">
+        <div class="d-flex" style="justify-content: space-between; align-items: center">
+          <label>Result</label>
+          <label>Authenticity Reliability: <?php echo round($result_percent, 2) ?> %</label>
+        </div>
         <textarea class="form-control" id="resultTextarea" rows="30">
         <?php
-          $compareTextArray = [
-            "COVID-19 Vaccination Record Card",
-            "Please keep this record card, which includes medical information",
-            "about the vaccines you have received.",
-            "Por favor, guarde esta tarjeta de registro, que incluye información",
-            "médica sobre las vacunas que ha recibido.",
-            "Last Name",
-            "Date of birth",
-            "First Name",
-            "MI",
-            "Patient number (medical record or IIS record number)",
-            "Product Name/Manufacturer",
-            "Vaccine",
-            "Lot Number",
-            "1st Dose",
-            "2nd Dose",
-            "COVID-19",
-            "Date",
-            "Healthcare Professional",
-            "or Clinic Site",
-            "Other",
-            "mm dd yy"
-          ];
-          $similarityRateArray = [];
-          foreach($response['ParsedResults'] as $pareValue) {
-            // echo $pareValue['ParsedText'];
-            $pareValueArray = explode("\t", $pareValue['ParsedText']);
-            foreach($pareValueArray as $value) {
-              echo $value;
-              echo "\n";
-              foreach($compareTextArray as $compareText) {
-                if (preg_replace('/\s+/', '', $value) == "") break;
-                $similarityRate = similarity($value, $compareText);
-                if ($similarityRate > 0.95) {
-                  array_push($similarityRateArray, $similarityRate);
-                  // echo "--------------------------\n";
-                  // echo $similarityRate."\n";
-                  break;
-                } else {
-                  $valueLen = strlen(preg_replace('/\s+/', '', $value));
-                  $diffCount = $valueLen - $valueLen * $similarityRate;
-                  if ($diffCount <= 1) {
-                    array_push($similarityRateArray, $similarityRate);
-                    // echo "--------------------------\n";
-                    // echo $similarityRate."\n";
-                    break;
-                  }
-                }
-              }
-            }
+          foreach($pareValueArray as $value) {
+            echo $value;
+            echo "\n";
           }
-          $average = 2;
-          $idx = 0;
-          while ($average > 1){
-            $average = array_sum($similarityRateArray)/(count($compareTextArray) + 1);
-            $idx++;
-          }
-          echo "---------------END--------------\n"."Reliability: ".$average."\n";
         ?></textarea>
       </div>
     </body>
